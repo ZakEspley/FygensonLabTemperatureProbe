@@ -1,0 +1,32 @@
+{
+    "calfilename": "calibration4.csv",
+    "runfilename": "run10.csv",
+    "dtens": 6,
+    "interval": 1.0,
+    "t2Active": false,
+    "doneHundreds": 0,
+    "duration": 60.0,
+    "itenThousands": 0,
+    "doneThousands": 0,
+    "dtenThousands": 0,
+    "itens": 0,
+    "t1Active": true,
+    "iones": 1,
+    "ioneHundreds": 0,
+    "dones": 0,
+    "ioneThousands": 0,
+    "t1Params": [
+        -420.928727,
+        1030.9166247,
+        2609.501093,
+        -6236.873146,
+        3880.265142
+    ],
+    "t2Params": [
+        -420.928727,
+        1030.9166247,
+        2609.501093,
+        -6236.873146,
+        3880.265142
+    ]
+}
