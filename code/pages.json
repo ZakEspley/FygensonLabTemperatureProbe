@@ -1,0 +1,855 @@
+{
+    "typography": {
+        "title": {
+            "font": "terminal",
+            "color":"0x888888",
+            "scale": 2
+        },
+        "display": {
+            "font": "terminal",
+            "color":"0xFFFFFF",
+            "scale": 1
+        },
+        "displayBig": {
+            "font": "terminal",
+            "color":"0x888888",
+            "scale": 4
+        },
+        "button": {
+            "label_font": "Helvetica",
+            "fill_color":"0x313d78",
+            "outline_color":"0xAAAAAA",
+            "label_color": "0xAAAAAA",
+            "selected_fill": "0x313d78",
+            "selected_outline": "0xFFFFFF",
+            "selected_label": "0xAAAAAA"
+        },
+        "message": {
+            "font": "terminal",
+            "color":"0x00FF00",
+            "scale": 2
+        },
+        "construction": {
+            "font": "terminal",
+            "color":"0xEE7777",
+            "scale": 3
+        }
+    },
+    "pages": {
+        "startPage":{
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "Temperature Probe",
+                    "position"  : [14,3],
+                    "typography": "title"
+                }
+            ],
+            "buttons": [
+                {
+                    "name"      : "setupButton",
+                    "position"  : [10,75],
+                    "dimensions": [100,50],
+                    "label"     : "Setup",
+                    "typography": "button",
+                    "active"    : true,
+                    "action"    : "setupButtonAction"
+                },
+                {
+                    "name"      : "startButton",
+                    "position"  : [125,75],
+                    "dimensions": [100,50],
+                    "label"     : "Start",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "startButtonAction"
+                }
+            ],
+            "layout": [["setupButton", "startButton"]],
+            "sublayouts": ["setupPage", "runPage"]
+        },
+        "setupPage": {
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "Setup",
+                    "position"  : [80,3],
+                    "typography": "title"
+                }
+            ],
+            "buttons": [
+                {
+                    "name"      : "intervalButton",
+                    "position"  : [125,40],
+                    "dimensions": [100,40],
+                    "label"     : "Interval",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "intervalButtonAction"
+                },
+                {
+                    "name"      : "thermistorButton",
+                    "position"  : [10,40],
+                    "dimensions": [100,40],
+                    "label"     : "Thermistors",
+                    "typography": "button",
+                    "active"    : true,
+                    "action"    : "thermistorButtonAction"
+                },
+                {
+                    "name"      : "calibrationButton",
+                    "position"  : [10,90],
+                    "dimensions": [100,40],
+                    "label"     : "Calibration",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "calibrationButtonAction"
+                },
+                {
+                    "name"      : "durationButton",
+                    "position"  : [125,90],
+                    "dimensions": [100,40],
+                    "label"     : "Duration",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "durationButtonAction"
+                }
+            ],
+            "layout": [["thermistorButton", "intervalButton"],
+                        ["calibrationButton", "durationButton"]],
+            "sublayouts": ["durationPage", "intervalPage", "thermistorPage", "calibrationSetupPage"]
+        },
+        "runPage": {
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "Running",
+                    "position"  : [70,0],
+                    "typography": "title"
+                },
+                {
+                    "name"      : "T1_label",
+                    "text"      : "T1 = ...",
+                    "position"  : [10,40],
+                    "typography": "title"
+                },
+                {
+                    "name"      : "intervalLabel",
+                    "text"      : "Interval: x s",
+                    "position"  : [10,101],
+                    "typography": "display"
+                },
+                {
+                    "name"      : "T2_label",
+                    "text"      : "T2 = ...",
+                    "position"  : [10,77],
+                    "typography": "title"
+                },
+                {
+                    "name"      : "durationLabel",
+                    "text"      : "Duration: x s",
+                    "position"  : [120,101],
+                    "typography": "display"
+                },
+                {
+                    "name"      : "elapsedTimeLabel",
+                    "text"      : "Elapsed Time:",
+                    "position"  : [10,126],
+                    "typography": "display"
+                }
+            ],
+            "buttons": [],
+            "layout": [[]],
+            "sublayouts": []
+        },
+        "durationPage": {
+            "labels": [
+                {
+                    "name"      : "durationLabel",
+                    "text"      : "00000 s",
+                    "position"  : [50,50],
+                    "typography": "displayBig"
+                }
+            ],
+            "buttons": [
+                {
+                    "name"      : "dtenThousandsUp",
+                    "position"  : [50,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : true,
+                    "action"    : "durationUpAction"
+                },
+                {
+                    "name"      : "doneThousandsUp",
+                    "position"  : [73,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "durationUpAction"
+                },
+                {
+                    "name"      : "doneHundredsUp",
+                    "position"  : [96,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "durationUpAction"
+                },
+                {
+                    "name"      : "dtensUp",
+                    "position"  : [119,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "durationUpAction"
+                },
+                {
+                    "name"      : "donesUp",
+                    "position"  : [142,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "durationUpAction"
+                },
+                {
+                    "name"      : "dtenThousandsDown",
+                    "position"  : [50,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "durationDownAction"
+                },
+                {
+                    "name"      : "doneThousandsDown",
+                    "position"  : [73,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "durationDownAction"
+                },
+                {
+                    "name"      : "doneHundredsDown",
+                    "position"  : [96,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "durationDownAction"
+                },
+                {
+                    "name"      : "dtensDown",
+                    "position"  : [119,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "durationDownAction"
+                },
+                {
+                    "name"      : "donesDown",
+                    "position"  : [142,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "durationDownAction"
+                }
+            ],
+            "layout": [["dtenThousandsUp", "doneThousandsUp", "doneHundredsUp", "dtensUp", "donesUp"],
+                        ["dtenThousandsDown", "doneThousandsDown", "doneHundredsDown", "dtensDown", "donesDown"]],
+            "sublayouts": []
+        },
+        "intervalPage":{
+            "labels": [
+                {
+                    "name"      : "intervalLabel",
+                    "text"      : "00000 s",
+                    "position"  : [50,50],
+                    "typography": "displayBig"
+                }
+            ],
+            "buttons": [
+                {
+                    "name"      : "itenThousandsUp",
+                    "position"  : [50,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : true,
+                    "action"    : "intervalUpAction"
+                },
+                {
+                    "name"      : "ioneThousandsUp",
+                    "position"  : [73,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "intervalUpAction"
+                },
+                {
+                    "name"      : "ioneHundredsUp",
+                    "position"  : [96,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "intervalUpAction"
+                },
+                {
+                    "name"      : "itensUp",
+                    "position"  : [119,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "intervalUpAction"
+                },
+                {
+                    "name"      : "ionesUp",
+                    "position"  : [142,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "intervalUpAction"
+                },
+                {
+                    "name"      : "itenThousandsDown",
+                    "position"  : [50,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "intervalDownAction"
+                },
+                {
+                    "name"      : "ioneThousandsDown",
+                    "position"  : [73,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "intervalDownAction"
+                },
+                {
+                    "name"      : "ioneHundredsDown",
+                    "position"  : [96,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "intervalDownAction"
+                },
+                {
+                    "name"      : "itensDown",
+                    "position"  : [119,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "intervalDownAction"
+                },
+                {
+                    "name"      : "ionesDown",
+                    "position"  : [142,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "intervalDownAction"
+                }
+            ],
+            "layout": [["itenThousandsUp", "ioneThousandsUp", "ioneHundredsUp", "itensUp", "ionesUp"],
+                        ["itenThousandsDown", "ioneThousandsDown", "ioneHundredsDown", "itensDown", "ionesDown"]],
+            "sublayouts": []
+        },
+        "thermistorPage":{
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "Thermistor Select",
+                    "position"  : [20,3],
+                    "typography": "title"
+                },
+                {
+                    "name"      : "title",
+                    "text"      : "Therm. 1",
+                    "position"  : [55,40],
+                    "typography": "title"
+                },
+                {
+                    "name"      : "title",
+                    "text"      : "Therm. 2",
+                    "position"  : [55, 80],
+                    "typography": "title"
+                }
+            ],
+            "buttons": [
+                {
+                    "name"      : "t1ActiveButton",
+                    "position"  : [10,40],
+                    "dimensions": [30,30],
+                    "label"     : "X",
+                    "typography": "button",
+                    "active"    : true,
+                    "action"    : "thermistorSelectButtonAction"
+                },
+                {
+                    "name"      : "t2ActiveButton",
+                    "position"  : [10,80],
+                    "dimensions": [30,30],
+                    "label"     : " ",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "thermistorSelectButtonAction"
+                }
+            ],
+            "layout": [["t1ActiveButton"],
+                        ["t2ActiveButton"]],
+            "sublayouts": []
+        },
+        "calibrationSetupPage":{
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "Calibration Setup",
+                    "position"  : [20,3],
+                    "typography": "title"
+                }
+            ],
+            "buttons": [
+                {
+                    "name"      : "calIntervalButton",
+                    "position"  : [125,40],
+                    "dimensions": [100,40],
+                    "label"     : "Interval",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "calIntervalButtonAction"
+                },
+                {
+                    "name"      : "channelButton",
+                    "position"  : [10,40],
+                    "dimensions": [100,40],
+                    "label"     : "Ch. Select",
+                    "typography": "button",
+                    "active"    : true,
+                    "action"    : "channelButtonAction"
+                },
+                {
+                    "name"      : "calibrateButton",
+                    "position"  : [10,90],
+                    "dimensions": [100,40],
+                    "label"     : "Calibrate",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "calibrateButtonAction"
+                },
+                {
+                    "name"      : "calDurationButton",
+                    "position"  : [125,90],
+                    "dimensions": [100,40],
+                    "label"     : "Duration",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "calDurationButtonAction"
+                }
+            ],
+            "layout": [["channelButton", "calIntervalButton"],
+                        ["calibrateButton", "calDurationButton"]],
+            "sublayouts": ["calDurationPage", "calIntervalPage", "channelPage", "calibratePage"]
+        },
+        "calIntervalPage":{
+            "labels": [
+                {
+                    "name"      : "calIntervalLabel",
+                    "text"      : "00000 s",
+                    "position"  : [50,50],
+                    "typography": "displayBig"
+                }
+            ],
+            "buttons": [
+                {
+                    "name"      : "citenThousandsUp",
+                    "position"  : [50,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : true,
+                    "action"    : "cintervalUpAction"
+                },
+                {
+                    "name"      : "cioneThousandsUp",
+                    "position"  : [73,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cintervalUpAction"
+                },
+                {
+                    "name"      : "cioneHundredsUp",
+                    "position"  : [96,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cintervalUpAction"
+                },
+                {
+                    "name"      : "citensUp",
+                    "position"  : [119,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cintervalUpAction"
+                },
+                {
+                    "name"      : "cionesUp",
+                    "position"  : [142,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cintervalUpAction"
+                },
+                {
+                    "name"      : "citenThousandsDown",
+                    "position"  : [50,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cintervalDownAction"
+                },
+                {
+                    "name"      : "cioneThousandsDown",
+                    "position"  : [73,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cintervalDownAction"
+                },
+                {
+                    "name"      : "cioneHundredsDown",
+                    "position"  : [96,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cintervalDownAction"
+                },
+                {
+                    "name"      : "citensDown",
+                    "position"  : [119,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cintervalDownAction"
+                },
+                {
+                    "name"      : "cionesDown",
+                    "position"  : [142,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cintervalDownAction"
+                }
+            ],
+            "layout": [["citenThousandsUp", "cioneThousandsUp", "cioneHundredsUp", "citensUp", "cionesUp"],
+                        ["citenThousandsDown", "cioneThousandsDown", "cioneHundredsDown", "citensDown", "cionesDown"]],
+            "sublayouts": []
+        },
+        "calDurationPage":{
+            "labels": [
+                {
+                    "name"      : "calDurationLabel",
+                    "text"      : "00000 s",
+                    "position"  : [50,50],
+                    "typography": "displayBig"
+                }
+            ],
+            "buttons": [
+                {
+                    "name"      : "cdtenThousandsUp",
+                    "position"  : [50,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : true,
+                    "action"    : "cdurationUpAction"
+                },
+                {
+                    "name"      : "cdoneThousandsUp",
+                    "position"  : [73,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cdurationUpAction"
+                },
+                {
+                    "name"      : "cdoneHundredsUp",
+                    "position"  : [96,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cdurationUpAction"
+                },
+                {
+                    "name"      : "cdtensUp",
+                    "position"  : [119,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cdurationUpAction"
+                },
+                {
+                    "name"      : "cdonesUp",
+                    "position"  : [142,35],
+                    "dimensions": [20,20],
+                    "label"     : "/\\",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cdurationUpAction"
+                },
+                {
+                    "name"      : "cdtenThousandsDown",
+                    "position"  : [50,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cdurationDownAction"
+                },
+                {
+                    "name"      : "cdoneThousandsDown",
+                    "position"  : [73,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cdurationDownAction"
+                },
+                {
+                    "name"      : "cdoneHundredsDown",
+                    "position"  : [96,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cdurationDownAction"
+                },
+                {
+                    "name"      : "cdtensDown",
+                    "position"  : [119,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cdurationDownAction"
+                },
+                {
+                    "name"      : "cdonesDown",
+                    "position"  : [142,105],
+                    "dimensions": [20,20],
+                    "label"     : "\\/",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "cdurationDownAction"
+                }
+            ],
+            "layout": [["cdtenThousandsUp", "cdoneThousandsUp", "cdoneHundredsUp", "cdtensUp", "cdonesUp"],
+                        ["cdtenThousandsDown", "cdoneThousandsDown", "cdoneHundredsDown", "cdtensDown", "cdonesDown"]],
+            "sublayouts": []
+        },
+        "channelPage":{
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "Channel Select",
+                    "position"  : [30,3],
+                    "typography": "title"
+                },
+                {
+                    "name"      : "title",
+                    "text"      : "Check the channel\r\nwith the thermistor",
+                    "position"  : [70,30],
+                    "typography": "display"
+                },
+                {
+                    "name"      : "title",
+                    "text"      : "Ch. 1",
+                    "position"  : [55,60],
+                    "typography": "title"
+                },
+                {
+                    "name"      : "title",
+                    "text"      : "Ch. 2",
+                    "position"  : [55, 100],
+                    "typography": "title"
+                }
+            ],
+            "buttons": [
+                {
+                    "name"      : "ch1ActiveButton",
+                    "position"  : [10,60],
+                    "dimensions": [30,30],
+                    "label"     : "X",
+                    "typography": "button",
+                    "active"    : true,
+                    "action"    : "channelSelectButtonAction"
+                },
+                {
+                    "name"      : "ch2ActiveButton",
+                    "position"  : [10,100],
+                    "dimensions": [30,30],
+                    "label"     : " ",
+                    "typography": "button",
+                    "active"    : false,
+                    "action"    : "channelSelectButtonAction"
+                }
+            ],
+            "layout": [["ch1ActiveButton"],
+                        ["ch2ActiveButton"]],
+            "sublayouts": []
+        },
+        "calibratePage":{
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "Calibrating",
+                    "position"  : [30,0],
+                    "typography": "title"
+                },
+                {
+                    "name"      : "R1_label",
+                    "text"      : "R1 = ...",
+                    "position"  : [10,40],
+                    "typography": "title"
+                },
+                {
+                    "name"      : "calIntervalLabel",
+                    "text"      : "Interval: x s",
+                    "position"  : [10,101],
+                    "typography": "display"
+                },
+                {
+                    "name"      : "R2_label",
+                    "text"      : "R2 = ...",
+                    "position"  : [10,77],
+                    "typography": "title"
+                },
+                {
+                    "name"      : "calDurationLabel",
+                    "text"      : "Duration: x s",
+                    "position"  : [120,101],
+                    "typography": "display"
+                },
+                {
+                    "name"      : "calElapsedTimeLabel",
+                    "text"      : "Elapsed Time:",
+                    "position"  : [10,126],
+                    "typography": "display"
+                }
+            ],
+            "buttons": [],
+            "layout": [[]],
+            "sublayouts": []
+        },
+        "measurementCompletePage":{
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "Measurement\r\nComplete!",
+                    "position"  : [10,10],
+                    "typography": "message"
+                }
+            ],
+            "buttons": [],
+            "layout": [[]],
+            "sublayouts": []
+        },
+        "underConstructionPage":{
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "Under\r\nConstruction!",
+                    "position"  : [10,10],
+                    "typography": "message"
+                }
+            ],
+            "buttons": [],
+            "layout": [[]],
+            "sublayouts": []
+        },
+        "noThermistorPage":{
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "Must select\r\nat least one\r\nthermistor!",
+                    "position"  : [10,10],
+                    "typography": "message"
+                }
+            ],
+            "buttons": [],
+            "layout": [[]],
+            "sublayouts": []
+        },
+        "badIntervalPage":{
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "Interval must\r\nbe >0",
+                    "position"  : [10,10],
+                    "typography": "message"
+                }
+            ],
+            "buttons": [],
+            "layout": [[]],
+            "sublayouts": []
+        },
+        "badDurationPage":{
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "Duration must\r\nbe >0",
+                    "position"  : [10,10],
+                    "typography": "message"
+                }
+            ],
+            "buttons": [],
+            "layout": [[]],
+            "sublayouts": []
+        },
+        "shortDurationPage":{
+            "labels": [
+                {
+                    "name"      : "title",
+                    "text"      : "interval must be\r\ngreater than duration.",
+                    "position"  : [10,10],
+                    "typography": "message"
+                }
+            ],
+            "buttons": [],
+            "layout": [[]],
+            "sublayouts": []
+        }
+    }   
+    
+}

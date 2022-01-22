@@ -1,29 +1,30 @@
+import gc
+gc.enable()
+import time
+import digitalio
+from analogio import AnalogIn
+# import terminalio
+from adafruit_display_text import label
+from adafruit_debouncer import Debouncer
+import math
 import board as board
 import displayio
 from adafruit_st7789 import ST7789
 import busio
-import time
-import digitalio
-from analogio import AnalogIn
-import terminalio
-from adafruit_display_text import label
-from adafruit_button import Button
-from adafruit_debouncer import Debouncer
-from adafruit_bitmap_font import bitmap_font
-import math
-import json
-from contentLayout import Layout, LayoutManager
-from buttons import BetterButton
-from layouts.startpage import StartPage
-from layouts.runpage import RunPage
-from layouts.setuppage import SetupPage
-from layouts.intervalpage import IntervalPage
-from layouts.thermistorpage import ThermistorPage
-from layouts.durationpage import DurationPage
-from layouts.underContructionpage import UnderConstructionPage
-from layouts.warningpage import WarningPage
-from layouts.messagepage import MessagePage
-from layouts.calibrationpage import CalibrationPage
+from contentLayout import LayoutManager
+from pages import *
+print(f'PAGES_LOADED: {gc.mem_free()}')
+gc.collect()
+
+# title_font = terminalio.FONT
+# title_color = 0x0000FF
+# title_scale = 2
+
+# Create colorings for all buttons
+# selected = 0xFFFFFF
+# notSelected = 0xAAAAAA
+# fill = 0x313d78
+
 #Get Display Ready to work
 def InitWSPicoLCD():
     spi = busio.SPI(clock=board.GP10, MOSI=board.GP11)
@@ -42,6 +43,17 @@ def InitWSPicoLCD():
 ## Initialize the Screen
 displayio.release_displays()
 display = InitWSPicoLCD()
+gc.collect()
+manager = LayoutManager(display, pageInfo['pages'], "startPage", "settings.json")
+
+gc.collect()
+
+# durationPage.durationLabel.text = f"{manager.settings['duration']:05.0f} s"
+# intervalPage.intervalLabel.text = f"{manager.settings['interval']:05.0f} s"
+# calDurationPage.calDurationLabel.text = f"{manager.settings['calDuration']:05.0f} s"
+# calIntervalPage.calIntervalLabel.text = f"{manager.settings['calInterval']:05.0f} s"
+manager.settings["runningFlag"] = False
+manager.settings["calibrationFlag"] = False
 
 #Setup Physical Buttons
 Apin = digitalio.DigitalInOut(board.GP15)
@@ -82,85 +94,6 @@ C = Debouncer(Cpin)
 # check the status of at the start of each run
 physicalButtons = [A, B, UP, DOWN, LEFT, RIGHT, C]
 
-######################################
-#####     Display Layouts      #######
-######################################
-
-# Set the color, scale and font for titles
-title_font = terminalio.FONT
-title_color = 0x0000FF
-title_scale = 2
-
-# Create colorings for all buttons
-selected = 0xFFFFFF
-notSelected = 0xAAAAAA
-fill = 0x313d78
-font = font = bitmap_font.load_font("/Helvetica-Bold-16.bdf")
-
-# # Create Interval Time Label
-
-
-# ## Settings to be used.
-
-
-# Create Layouts
-startPage = StartPage(selected, notSelected, title_font, title_color, title_scale, font, fill)
-runPage = RunPage(selected, notSelected, title_font, title_color, title_scale, font, fill)
-setupPage = SetupPage(selected, notSelected, title_font, title_color, title_scale, font, fill)
-intervalPage = IntervalPage(selected, notSelected, title_font, title_color, title_scale, font, fill)
-
-
-thermistorPage = ThermistorPage(selected, notSelected, title_font, title_color, title_scale, font, fill)
-
-durationPage = DurationPage(selected, notSelected, title_font, title_color, title_scale, font, fill)
-
-# underConstructionPage = UnderConstructionPage(selected, notSelected, title_font, title_color, title_scale, font, fill)
-
-calibrationPage = CalibrationPage(selected, notSelected, title_font, title_color, title_scale, font, fill)
-
-
-noThermistorWarningPage = WarningPage(selected, notSelected, title_font, title_color, title_scale, font, fill, "Must select\r\nat least one\r\nthermistor!")
-noIntervalWarningPage = WarningPage(selected, notSelected, title_font, title_color, title_scale, font, fill, "Interval must\r\n must be >0")
-noDurationWarningPage = WarningPage(selected, notSelected, title_font, title_color, title_scale, font, fill, "Duration must\r\n must be >0")
-shortDurationWarningPage = WarningPage(selected, notSelected, title_font, title_color, title_scale, font, fill, "Interval must\r\n must be \r\n> duration")
-
-completedPage = MessagePage(selected, notSelected, title_font, title_color, title_scale, font, fill, "Measurement\r\nComplete!")
-
-
-#  Create a manager control when layouts are displayed.
-manager = LayoutManager(display, startPage, "settings.json")
-# Append children only after creating manager
-startPage.addChildren([runPage, setupPage, noThermistorWarningPage, noIntervalWarningPage, noDurationWarningPage, shortDurationWarningPage])
-setupPage.addChildren([intervalPage, thermistorPage, calibrationPage, durationPage])
-runPage.addChild(completedPage)
-
-value = manager.settings['interval']
-intervalSetting = label.Label(title_font, text=f"{value:05.0f} s", color=title_color, scale=4, anchored_position=(50,50), anchor_point=(0,0))
-manager.settings["intervalSetting"] = intervalSetting
-
-value = manager.settings["duration"]
-durationSetting = label.Label(title_font, text=f"{value:05.0f} s", color=title_color, scale=4, anchored_position=(50,50), anchor_point=(0,0))
-manager.settings["durationSetting"] = durationSetting
-
-manager.settings["runningFlag"] = False
-manager.settings["calibrationFlag"] = False
-
-if manager.settings['t1Active']:
-    thermistorPage.T1Button.label="X"
-else:
-    thermistorPage.T1Button.label=" "
-
-if manager.settings['t2Active']:
-    thermistorPage.T2Button.label="X"
-else:
-    thermistorPage.T2Button.label=" "
-
-
-
-intervalPage.group.append(intervalSetting)
-durationPage.group.append(durationSetting)
-######### END LAYOUT SECTIONS ############
-
 ## Define how to process data to get temperature
 
 # This function just gets that bits from a ADC pin
@@ -179,6 +112,7 @@ def calcT(bit, R_rel, params):
     T = c1 + c2*η + c3*η**2 + c4*η**3 + c5*η**4
     return T
 
+
 def calcR(bit, R_rel):
     return R_rel/(65535/bit - 1)
 
@@ -189,6 +123,9 @@ def appendDataFile(data):
         else:
             file.write(f"{data[0]}, {data[1]}, {data[2]}\r\n")
 
+def appendCalibrationFile(data):
+    with open(f"/data/{manager.settings['calfilename']}", 'a') as file:
+        file.write(f"{data[0]}, {data[1]}, {data[2]}\r\n")
 
 # Setup the ADC
 ADC0 = board.GP26_A0
@@ -206,8 +143,10 @@ R_10k = (22130)/2 #Two 22kΩ in parallel
 R_Total= R_10k + R_100
 
 previousMeasurement = 0
-measurementCounter = 1
+# measurementCounter = 1
 avgLen = 5
+gc.collect()
+print(f"Before While: {gc.mem_free()}")
 while True:
     for button in physicalButtons:
         button.update()
@@ -247,34 +186,37 @@ while True:
             runPage.elapsedTimeLabel.text = f"Elapsed Time: {dt:.0f} s" 
     
     elif manager.settings['calibrationFlag']:
+        calibrationPage.intervalLabel.text = f"Int: {manager.settings['interval']:.0f} s"
+        calibrationPage.durationLabel.text = f"Dur: {manager.settings['duration']:.0f} s"
         now = time.monotonic()
-        dt = now-previousMeasurement
-        if dt >=1:
+        dt = now-manager.settings['startTime']
+        if now >= previousMeasurement + manager.settings['interval']:
             t1bits =[]
-            if manager.settings['t1Active']:
-                for i in range(avgLen):
-                    t1bits.append(getBits(T1,ground))
-                t1bit = sum(t1bits)/avgLen
+            for i in range(avgLen):
+                t1bits.append(getBits(T1,ground))
+            t1bit = sum(t1bits)/avgLen
             t2bits = []
-            if manager.settings['t2Active']:
-                for i in range(avgLen):
-                    t2bits.append(getBits(T2, ground))
-                t2bit = sum(t2bits)/avgLen
+            for i in range(avgLen):
+                t2bits.append(getBits(T2, ground))
+            t2bit = sum(t2bits)/avgLen
         
-            data = [measurementCounter]
-            if manager.settings['t1Active']:
+            data = [dt]
+            if manager.settings['ch1Active']:
                 R1_r = calcR(t1bit, R_Total)
-                calibrationPage.R1_label.text = f"R1 = {R1_r:.1f} Ω"
-                data.append(R1_r)
-            if manager.settings['t2Active']:
+                R2_r = calcR(t2bit, R_100)
+                gc.collect()
+            else:
+                R1_r = calcR(t1bit, R_100)
                 R2_r = calcR(t2bit, R_Total)
-                calibrationPage.R2_label.text = f"R2 = {R2_r:.1f} Ω"
-                data.append(R2_r)
-            manager.activeLayout.data = data
+                gc.collect()
+            calibrationPage.R1_label.text = f"R1 = {R1_r:.1f} Ω"
+            data.append(R1_r)
+            calibrationPage.R2_label.text = f"R2 = {R2_r:.1f} Ω"
+            data.append(R2_r)
+            appendCalibrationFile(data)
+            gc.collect()
             previousMeasurement = now
 
-        
-    
     if RIGHT.fell:
         manager.activeLayout.updateLayout("RIGHT")
     if LEFT.fell:
@@ -285,12 +227,10 @@ while True:
         manager.activeLayout.updateLayout("DOWN")
     if A.fell and manager.activeLayout.activeButton is not None:
         manager.activeLayout.activeButton.action(manager.settings)
-        if isinstance(manager.activeLayout, CalibrationPage):
-            measurementCounter += 1
+        gc.collect()
     if B.fell:
         if manager.settings['calibrationFlag'] or manager.settings['runningFlag']:
             manager.settings['calibrationFlag'] = False
             manager.settings['runningFlag'] = False
             previousMeasurement = 0
-            measurementCounter = 1
         manager.parentLayout()
